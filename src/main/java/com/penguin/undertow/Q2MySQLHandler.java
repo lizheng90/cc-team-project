@@ -95,23 +95,27 @@ public class Q2MySQLHandler extends BaseHttpHandler {
       endTime = System.currentTimeMillis();
       System.out.println("4Total execution time: " + (endTime - startTime)
           + "ms");
-
-      if (rs != null) {
-        rs.close();
-      }
-      if (pstmt != null) {
-        pstmt.close();
-      }
-      if (conn != null) {
-        conn.close();
-      }
-
-      endTime = System.currentTimeMillis();
-      System.out.println("5Total execution time: " + (endTime - startTime)
-          + "ms");
     } catch (SQLException e) {
       e.printStackTrace();
+    } finally {
+      try {
+        if (rs != null) {
+          rs.close();
+        }
+        if (pstmt != null) {
+          pstmt.close();
+        }
+        if (conn != null) {
+          conn.close();
+        }
+      } catch (Exception e) {
+        System.out.println("exception when closing");
+      }
     }
+
+    endTime = System.currentTimeMillis();
+    System.out
+        .println("5Total execution time: " + (endTime - startTime) + "ms");
 
     String result = response.replaceAll("\t", "");
     return getDefaultResponse() + result;

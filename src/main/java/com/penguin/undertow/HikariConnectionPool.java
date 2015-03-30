@@ -21,6 +21,7 @@ public class HikariConnectionPool {
     config.addDataSourceProperty("user", "root");
     config.addDataSourceProperty("password", "");
     config.addDataSourceProperty("url", "jdbc:mysql://localhost:3306/CC_Final");
+    config.addDataSourceProperty("autoReconnect", false);
     dataSource = new HikariDataSource(config);
   }
 
