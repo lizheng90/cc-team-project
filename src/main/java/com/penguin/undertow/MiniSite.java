@@ -2,6 +2,7 @@ package com.penguin.undertow;
 
 import io.undertow.Handlers;
 import io.undertow.Undertow;
+import io.undertow.UndertowOptions;
 import io.undertow.server.HttpHandler;
 // hbase api import
 // dynamodb api import
@@ -26,7 +27,6 @@ public class MiniSite {
   static final int SERVER_PORT = 80;
   static final String SERVER_IP = "0.0.0.0";
 
-
   @SuppressWarnings("all")
   public static void main(String[] args) throws Exception {
 
@@ -44,12 +44,14 @@ public class MiniSite {
     HttpHandler q3Handler = new Q3MySQLHandler();
     HttpHandler q4Handler = new Q4MySQLHandler();
 
-    builder.setHandler(Handlers.path()
-        .addPrefixPath(PATH_HC, healthCheckHandler)
-        .addPrefixPath(PATH_Q1, q1Handler)
-        .addPrefixPath(PATH_Q2, q2Handler)
-        .addPrefixPath(PATH_Q3, q3Handler)
-        .addPrefixPath(PATH_Q4, q4Handler));
+    builder
+        .setHandler(
+            Handlers.path().addPrefixPath(PATH_HC, healthCheckHandler)
+                .addPrefixPath(PATH_Q1, q1Handler)
+                .addPrefixPath(PATH_Q2, q2Handler)
+                .addPrefixPath(PATH_Q3, q3Handler)
+                .addPrefixPath(PATH_Q4, q4Handler)).setWorkerThreads(64)
+        .setServerOption(UndertowOptions.ALWAYS_SET_KEEP_ALIVE, false);
 
     Undertow server = builder.build();
     server.start();

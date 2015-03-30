@@ -55,6 +55,12 @@
     <artifactId>hbase</artifactId>
     <version>0.94.18</version>
 </dependency>
+<dependency>
+  <groupId>com.zaxxer</groupId>
+  <artifactId>HikariCP-java6</artifactId>
+  <version>2.3.5</version>
+</dependency>
+
 
   </dependencies>
   <build>
