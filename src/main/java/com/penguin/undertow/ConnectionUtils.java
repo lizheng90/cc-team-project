@@ -6,8 +6,10 @@ import java.sql.SQLException;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
-import org.apache.hadoop.hbase.client.HTable;
-import org.apache.hadoop.hbase.util.Bytes;
+import org.apache.hadoop.hbase.ZooKeeperConnectionException;
+import org.apache.hadoop.hbase.client.HConnection;
+import org.apache.hadoop.hbase.client.HConnectionManager;
+import org.apache.hadoop.hbase.client.HTableInterface;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -31,10 +33,8 @@ public class ConnectionUtils {
   /**
    * HBase
    */
-  private static final String ADDRESS_HBASE = "hdfs://172.31.58.237:9000";
-  private static final String ZOOKEEPER = "ip-172-31-58-237.ec2.internal";
-  private static final String TABLE_NAME = "friendslist";
-  private static HTable hTable = null;
+  private Configuration conf = null;
+  private HConnection hConnection = null;
 
   @SuppressWarnings("all")
   protected ConnectionUtils() {
@@ -52,15 +52,10 @@ public class ConnectionUtils {
       config.addDataSourceProperty("autoReconnect", false);
       mySqlDataSource = new HikariDataSource(config);
     } else if (MiniSite.DB_TYPE == MiniSite.HBASE) {
-
-      // HBase
-      Configuration config = HBaseConfiguration.create();
-      config.set("hbase.master", ADDRESS_HBASE);
-      config.set("hbase.zookeeper.quorum", ZOOKEEPER);
+      conf = HBaseConfiguration.create();
       try {
-        hTable = new HTable(config, Bytes.toBytes(TABLE_NAME));
-        System.out.println("Connected to HTable");
-      } catch (IOException e) {
+        hConnection = HConnectionManager.createConnection(conf);
+      } catch (ZooKeeperConnectionException e) {
         e.printStackTrace();
       }
     }
@@ -77,7 +72,7 @@ public class ConnectionUtils {
     return mySqlDataSource.getConnection();
   }
 
-  public HTable getHTable() {
-    return hTable;
+  public HTableInterface getHTable(String tableName) throws IOException {
+    return hConnection.getTable(tableName);
   }
 }

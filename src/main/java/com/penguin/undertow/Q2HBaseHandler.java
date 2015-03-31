@@ -6,10 +6,8 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Deque;
 
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.client.Get;
-import org.apache.hadoop.hbase.client.HTable;
+import org.apache.hadoop.hbase.client.HTableInterface;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.util.Bytes;
 
@@ -33,16 +31,7 @@ public class Q2HBaseHandler extends BaseHttpHandler {
   private static final byte[] INFO_FAMILY = Bytes.toBytes("info");
   private static final byte[] INFO_QUALIFIER = Bytes.toBytes("content");
 
-  private static HTable table = null;
-
-  public Q2HBaseHandler() {
-    Configuration config = HBaseConfiguration.create();
-    try {
-      table = new HTable(config, Bytes.toBytes("twitter"));
-    } catch (IOException e) {
-      System.out.println("EXCEPTION " + e.toString());
-    }
-  }
+  private static final String TABLE_NAME = "twitter";
 
   @Override
   public String getResponse(HttpServerExchange exchange) {
@@ -62,15 +51,24 @@ public class Q2HBaseHandler extends BaseHttpHandler {
     }
 
     // Get response
-
     String rowKey = userId + timeStamp.replaceAll("   | |-|:|\t", "");
     Get get = new Get(Bytes.toBytes(rowKey));
     Result result = null;
+    HTableInterface table = null;
 
     try {
+      ConnectionUtils.getInstance().getHTable(TABLE_NAME);
       result = table.get(get);
     } catch (IOException e) {
       System.out.println("EXCEPTION " + e.toString());
+    } finally {
+      if (table != null) {
+        try {
+          table.close();
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+      }
     }
 
     byte[] value = result.getValue(INFO_FAMILY, INFO_QUALIFIER);

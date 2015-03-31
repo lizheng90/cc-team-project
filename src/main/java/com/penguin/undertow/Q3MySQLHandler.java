@@ -7,26 +7,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Deque;
-import java.util.HashMap;
 
 /**
  * Question 3 MySQL Handler.
  */
 
 public class Q3MySQLHandler extends BaseHttpHandler {
-  /**
-   * Flag map
-   */
-  private static final HashMap<String, String> flagMap = new HashMap<String, String>();
 
-  /**
-   * Preload flag map
-   */
-  static {
-    flagMap.put("1", "-");
-    flagMap.put("2", "+");
-    flagMap.put("3", "*");
-  }
+  private static final char[] FLAG_MAP = new char[] { '0', '+', '-', '*' };
 
   /**
    * Keys for http params
@@ -50,7 +38,7 @@ public class Q3MySQLHandler extends BaseHttpHandler {
 
     StringBuilder response = new StringBuilder();
     String sql = "SELECT * FROM twitter3 WHERE sourceid='" + userId
-        + "' ORDER BY flag DESC, count DESC, retweetid ASC;";
+        + "'ORDER BY FIELD(flag,3,1,2), count DESC, retweetid ASC;";
 
     Connection conn = null;
     PreparedStatement pstmt = null;
@@ -62,7 +50,7 @@ public class Q3MySQLHandler extends BaseHttpHandler {
       rs = pstmt.executeQuery();
 
       while (rs.next()) {
-        String relationship = flagMap.get(rs.getString("flag"));
+        char relationship = FLAG_MAP[rs.getInt("flag")];
         response = response.append(relationship).append(",")
             .append(rs.getString("count")).append(",")
             .append(rs.getString("retweetid")).append("\n");
