@@ -2,13 +2,15 @@ package com.penguin.undertow;
 
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.client.HTable;
 import org.apache.hadoop.hbase.util.Bytes;
+
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 
 /**
  * @author mitayun
@@ -24,7 +26,7 @@ public class ConnectionUtils {
   private static final String ADDRESS_MYSQL = "jdbc:mysql://localhost:3306/CC_Final";
   private static final String USERNAME = "root";
   private static final String PW = "";
-  private static Connection mySqlConnection = null;
+  private static HikariDataSource mySqlDataSource = null;
 
   /**
    * HBase
@@ -38,13 +40,17 @@ public class ConnectionUtils {
   protected ConnectionUtils() {
     // MySQL
     if (MiniSite.DB_TYPE == MiniSite.MYSQL) {
-      try {
-        mySqlConnection = DriverManager.getConnection(ADDRESS_MYSQL, USERNAME,
-            PW);
-        System.out.println("Connected to MySQL");
-      } catch (SQLException e) {
-        e.printStackTrace();
-      }
+      HikariConfig config = new HikariConfig();
+      config.setMaximumPoolSize(150);
+      config
+          .setDataSourceClassName("com.mysql.jdbc.jdbc2.optional.MysqlDataSource");
+      config.addDataSourceProperty("serverName", "localhost");
+      config.addDataSourceProperty("url", ADDRESS_MYSQL);
+      config.addDataSourceProperty("user", USERNAME);
+      config.addDataSourceProperty("password", PW);
+      config.addDataSourceProperty("port", 3306);
+      config.addDataSourceProperty("autoReconnect", false);
+      mySqlDataSource = new HikariDataSource(config);
     } else if (MiniSite.DB_TYPE == MiniSite.HBASE) {
 
       // HBase
@@ -67,8 +73,8 @@ public class ConnectionUtils {
     return instance;
   }
 
-  public Connection getMySQLConnection() {
-    return mySqlConnection;
+  public Connection getMySQLConnection() throws SQLException {
+    return mySqlDataSource.getConnection();
   }
 
   public HTable getHTable() {

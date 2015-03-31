@@ -14,6 +14,8 @@ import java.util.Deque;
 
 public class Q2MySQLHandler extends BaseHttpHandler {
 
+  private static final boolean DEBUG = false;
+
   /**
    * Keys for http params
    */
@@ -41,60 +43,39 @@ public class Q2MySQLHandler extends BaseHttpHandler {
     String sql = "SELECT * FROM CC_Final.twitter2 WHERE userid='" + userId
         + "' AND ts='" + timeStamp + "';";
     long startTime = System.currentTimeMillis();
-    long endTime;
 
-    // CallableStatement cs = null;
     Connection conn = null;
     PreparedStatement pstmt = null;
     ResultSet rs = null;
 
     try {
-      conn = HikariConnectionPool.getInstance().getConnection();
+      conn = ConnectionUtils.getInstance().getMySQLConnection();
 
-      System.out.println(sql);
+      if (DEBUG) {
+        System.out.println(sql);
+      }
 
-      /*pstmt = conn
-          .prepareStatement("select * from CC_Final.twitter2 where userid = ? and ts = ?");
-      pstmt.setString(1, userId);
-      pstmt.setString(2, timeStamp);*/
       pstmt = conn.prepareStatement(sql);
 
-      endTime = System.currentTimeMillis();
-      System.out.println("1Total execution time: " + (endTime - startTime)
-          + "ms");
+      if (DEBUG) {
+        logTime(startTime, 1);
+      }
 
       rs = pstmt.executeQuery();
-      // pstmt = ConnectionUtils.getInstance().getMySQLConnection()
-      // .prepareStatement(sql);
 
-      /*cs = ConnectionUtils.getInstance().getMySQLConnection()
-          .prepareCall("{call query_twitter(?,?,?)}");*/
-      /*cs = ConnectionPool.getInstance().getConnection()
-          .prepareCall("{call query_twitter(?,?,?)}");
-      cs.setLong(1, Long.parseLong(userId));
-      cs.setLong(2, Long.parseLong(timeStamp));
-      cs.registerOutParameter(3, Types.VARCHAR);
-      cs.executeUpdate();
-      */
+      if (DEBUG) {
+        logTime(startTime, 2);
+      }
 
-      endTime = System.currentTimeMillis();
-      System.out.println("2Total execution time: " + (endTime - startTime)
-          + "ms");
-      // rs = pstmt.executeQuery();
-      // rs = cs.getResultSet();
-      endTime = System.currentTimeMillis();
-      System.out.println("3Total execution time: " + (endTime - startTime)
-          + "ms");
       if (rs != null) {
         while (rs.next()) {
-          // response = response + cs.getString(3);
           response = response + rs.getString(3);
         }
       }
 
-      endTime = System.currentTimeMillis();
-      System.out.println("4Total execution time: " + (endTime - startTime)
-          + "ms");
+      if (DEBUG) {
+        logTime(startTime, 3);
+      }
     } catch (SQLException e) {
       e.printStackTrace();
     } finally {
@@ -113,11 +94,16 @@ public class Q2MySQLHandler extends BaseHttpHandler {
       }
     }
 
-    endTime = System.currentTimeMillis();
-    System.out
-        .println("5Total execution time: " + (endTime - startTime) + "ms");
-
+    if (DEBUG) {
+      logTime(startTime, 4);
+    }
     String result = response.replaceAll("\t", "");
     return getDefaultResponse() + result;
+  }
+
+  private void logTime(long startTime, int key) {
+    long endTime = System.currentTimeMillis();
+    System.out
+        .println("1Total execution time: " + (endTime - startTime) + "ms");
   }
 }
