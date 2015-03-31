@@ -44,10 +44,13 @@ public class Q4MySQLHandler extends BaseHttpHandler {
     endtime = endtime.replaceAll("-", "") + "235959";
 
     StringBuilder response = new StringBuilder();
-    String sql = "SELECT * FROM twitter4 WHERE tag='" + tag
-        + "' AND time BETWEEN " + starttime + " AND " + endtime
-        + " ORDER BY tweetid ASC;";
-
+    String sql = "SELECT DISTINCT time,tweetid,userid FROM ( SELECT time,tweetid,userid FROM twitter4 WHERE tag='"
+        + tag
+        + "' AND (time >= "
+        + starttime
+        + " AND time <="
+        + endtime
+        + ") ) as s ORDER BY tweetid ASC;";
     Connection conn = null;
     PreparedStatement pstmt = null;
     ResultSet rs = null;

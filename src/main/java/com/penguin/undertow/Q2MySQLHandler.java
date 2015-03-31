@@ -40,7 +40,7 @@ public class Q2MySQLHandler extends BaseHttpHandler {
     }
 
     String response = "";
-    String sql = "SELECT * FROM CC_Final.twitter2 WHERE userid='" + userId
+    String sql = "SELECT content FROM CC_Final.twitter2 WHERE userid='" + userId
         + "' AND ts='" + timeStamp + "';";
 
 
@@ -69,7 +69,7 @@ public class Q2MySQLHandler extends BaseHttpHandler {
 
       if (rs != null) {
         while (rs.next()) {
-          response = response + rs.getString(3);
+          response = response + rs.getString("content");
         }
       }
 
