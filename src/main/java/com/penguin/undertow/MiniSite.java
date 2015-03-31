@@ -50,7 +50,7 @@ public class MiniSite {
                 .addPrefixPath(PATH_Q1, q1Handler)
                 .addPrefixPath(PATH_Q2, q2Handler)
                 .addPrefixPath(PATH_Q3, q3Handler)
-                .addPrefixPath(PATH_Q4, q4Handler)).setWorkerThreads(64)
+                .addPrefixPath(PATH_Q4, q4Handler)).setWorkerThreads(128)
         .setServerOption(UndertowOptions.ALWAYS_SET_KEEP_ALIVE, false);
 
     Undertow server = builder.build();

@@ -36,6 +36,8 @@ public abstract class BaseHttpHandler implements HttpHandler {
   private static String sName = null;
   private static String sDefaultResponse = null;
 
+  protected long startTime = 0;
+
   /**
    * Main function for handling HTTP request
    */
@@ -78,5 +80,14 @@ public abstract class BaseHttpHandler implements HttpHandler {
 
   protected Connection getMySQLConnection() throws SQLException {
     return DriverManager.getConnection(ADDRESS_MYSQL, USERNAME, PW);
+  }
+
+  protected void setStartTime() {
+    startTime = System.currentTimeMillis();
+  }
+
+  protected void logTime(String key) {
+    long endTime = System.currentTimeMillis();
+    System.out.println(key + ": " + (endTime - startTime) + "ms");
   }
 }

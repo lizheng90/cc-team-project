@@ -12,5 +12,6 @@
 	<classpathentry kind="lib" path="/Users/mitayun/Downloads/hbase-0.94.18/hbase-0.94.18.jar" sourcepath="/Users/mitayun/.m2/repository/org/apache/hbase/hbase/0.94.18/hbase-0.94.18-sources.jar"/>
 	<classpathentry kind="lib" path="/Users/mitayun/Downloads/aws-java-sdk-1.8.9.1.jar"/>
 	<classpathentry kind="lib" path="/Users/mitayun/Downloads/jackson-core-asl-1.9.13.jar"/>
+	<classpathentry kind="lib" path="/Users/mitayun/Downloads/commons-lang-2.2.jar"/>
 	<classpathentry kind="output" path="target/test-classes"/>
 </classpath>

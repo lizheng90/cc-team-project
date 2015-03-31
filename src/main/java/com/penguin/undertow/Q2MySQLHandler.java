@@ -42,7 +42,7 @@ public class Q2MySQLHandler extends BaseHttpHandler {
     String response = "";
     String sql = "SELECT * FROM CC_Final.twitter2 WHERE userid='" + userId
         + "' AND ts='" + timeStamp + "';";
-    long startTime = System.currentTimeMillis();
+
 
     Connection conn = null;
     PreparedStatement pstmt = null;
@@ -58,13 +58,13 @@ public class Q2MySQLHandler extends BaseHttpHandler {
       pstmt = conn.prepareStatement(sql);
 
       if (DEBUG) {
-        logTime(startTime, 1);
+        logTime("1");
       }
 
       rs = pstmt.executeQuery();
 
       if (DEBUG) {
-        logTime(startTime, 2);
+        logTime("2");
       }
 
       if (rs != null) {
@@ -74,7 +74,7 @@ public class Q2MySQLHandler extends BaseHttpHandler {
       }
 
       if (DEBUG) {
-        logTime(startTime, 3);
+        logTime("3");
       }
     } catch (SQLException e) {
       e.printStackTrace();
@@ -95,15 +95,11 @@ public class Q2MySQLHandler extends BaseHttpHandler {
     }
 
     if (DEBUG) {
-      logTime(startTime, 4);
+      logTime("4");
     }
     String result = response.replaceAll("\t", "");
     return getDefaultResponse() + result;
   }
 
-  private void logTime(long startTime, int key) {
-    long endTime = System.currentTimeMillis();
-    System.out
-        .println("1Total execution time: " + (endTime - startTime) + "ms");
-  }
+
 }

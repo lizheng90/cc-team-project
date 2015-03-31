@@ -3,10 +3,12 @@ package com.penguin.undertow;
 import io.undertow.server.HttpServerExchange;
 
 import java.math.BigInteger;
-import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.commons.lang.time.FastDateFormat;
 
 /**
  * Handler for Question 1 - Heartbeat page.
@@ -111,7 +113,11 @@ public class Q1HeartBeatHandler extends BaseHttpHandler {
   }
 
   private String getTimeStamp() {
+    /*
     return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss\n")
-        .format(new java.util.Date());
+        .format(new java.util.Date());*/
+    return FastDateFormat.getInstance("yyyy-MM-dd HH:mm:ss\n").format(
+        new Date());
+
   }
 }

@@ -14,7 +14,7 @@ import java.util.Deque;
 
 public class Q3MySQLHandler extends BaseHttpHandler {
 
-  private static final char[] FLAG_MAP = new char[] { '0', '+', '-', '*' };
+  private static final char[] FLAG_MAP = new char[] { '0', '-', '+', '*' };
 
   /**
    * Keys for http params
@@ -36,9 +36,12 @@ public class Q3MySQLHandler extends BaseHttpHandler {
       return getDefaultResponse();
     }
 
+    // setStartTime();
     StringBuilder response = new StringBuilder();
+    /*String sql = "SELECT * FROM twitter3 WHERE sourceid='" + userId
+        + "'ORDER BY FIELD(flag,3,1,2), count DESC, retweetid ASC;";*/
     String sql = "SELECT * FROM twitter3 WHERE sourceid='" + userId
-        + "'ORDER BY FIELD(flag,3,1,2), count DESC, retweetid ASC;";
+        + "'ORDER BY flag DESC, count DESC, retweetid ASC;";
 
     Connection conn = null;
     PreparedStatement pstmt = null;
@@ -47,14 +50,16 @@ public class Q3MySQLHandler extends BaseHttpHandler {
     try {
       conn = ConnectionUtils.getInstance().getMySQLConnection();
       pstmt = conn.prepareStatement(sql);
+      // logTime("preparedStmt");
       rs = pstmt.executeQuery();
-
+      // logTime("done executing query");
       while (rs.next()) {
         char relationship = FLAG_MAP[rs.getInt("flag")];
         response = response.append(relationship).append(",")
             .append(rs.getString("count")).append(",")
             .append(rs.getString("retweetid")).append("\n");
       }
+      // logTime("done appending");
     } catch (SQLException e) {
       e.printStackTrace();
     } finally {
@@ -74,6 +79,7 @@ public class Q3MySQLHandler extends BaseHttpHandler {
     }
 
     String result = response.toString();
+    // logTime("done toString");
     return getDefaultResponse() + result;
   }
 }
