@@ -38,11 +38,10 @@ public class Q3MySQLHandler extends BaseHttpHandler {
 
     // setStartTime();
     StringBuilder response = new StringBuilder();
-    /*String sql = "SELECT * FROM twitter3 WHERE sourceid='" + userId
-        + "'ORDER BY FIELD(flag,3,1,2), count DESC, retweetid ASC;";*/
-    String sql = "SELECT * FROM twitter3 WHERE sourceid='" + userId
-        + "'ORDER BY flag DESC, count DESC, retweetid ASC;";
 
+    String sql = "SELECT retweetid,count,flag FROM ( SELECT retweetid,count,flag FROM twitter3 WHERE sourceid="
+        + userId
+        + " LIMIT 100) as s ORDER BY flag DESC, count DESC, retweetid ASC;";
     Connection conn = null;
     PreparedStatement pstmt = null;
     ResultSet rs = null;
