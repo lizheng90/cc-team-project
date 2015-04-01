@@ -4,9 +4,12 @@ import io.undertow.server.HttpServerExchange;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.hadoop.hbase.KeyValue;
 import org.apache.hadoop.hbase.client.HTableInterface;
@@ -24,6 +27,31 @@ import org.apache.hadoop.hbase.util.Bytes;
 
 public class Q3HBaseHandler extends BaseHttpHandler {
 
+  public class Q3Object implements Comparable<Q3Object> {
+    public int relationship;
+    public int count;
+    public long buddy;
+
+    public Q3Object(int relationship, int count, long buddy) {
+      this.relationship = relationship;
+      this.count = count;
+      this.buddy = buddy;
+    }
+
+    @Override
+    public int compareTo(Q3Object other) {
+      int i = Integer.compare(relationship, other.relationship);
+      if (i != 0) {
+        return i;
+      }
+      int j = Integer.compare(other.count, count);
+      if (j != 0) {
+        return j;
+      }
+      return Long.compare(other.buddy, buddy);
+    }
+  }
+
   /**
    * Keys for http params
    */
@@ -39,15 +67,16 @@ public class Q3HBaseHandler extends BaseHttpHandler {
 
   private static final String TABLE_NAME = "twitter3";
 
-  private static final HashMap<String, String> FLAG_MAP = new HashMap<String, String>();
+  private static final HashMap<Integer, String> FLAG_MAP = new HashMap<Integer, String>();
   static {
-    FLAG_MAP.put("1", "+");
-    FLAG_MAP.put("2", "-");
-    FLAG_MAP.put("3", "*");
+    FLAG_MAP.put(1, "-");
+    FLAG_MAP.put(2, "+");
+    FLAG_MAP.put(3, "*");
   }
 
   @Override
   public String getResponse(HttpServerExchange exchange) {
+    List<Q3Object> objects = new ArrayList<Q3Object>();
     // Get parameters
     Deque<String> uid = exchange.getQueryParameters().get(KEY_UID);
 
@@ -100,13 +129,26 @@ public class Q3HBaseHandler extends BaseHttpHandler {
       }
       print("done printing");
 
-      String flag = getValue(result, QUALIFIER_TYPE);
-      String relationship = FLAG_MAP.get(flag);
-      String buddy = getValue(result, QUALIFIER_BUDDY);
-      String count = getValue(result, QUALIFIER_COUNT);
+      int flag = Integer.parseInt(getValue(result, QUALIFIER_TYPE));
+      if (flag != 3) {
+        flag = 3 - flag;
+      }
+      // String relationship = FLAG_MAP.get(flag);
+      long buddy = Long.parseLong(getValue(result, QUALIFIER_BUDDY));
+      int count = Integer.parseInt(getValue(result, QUALIFIER_COUNT));
 
-      response = response.append(relationship).append(",").append(count)
-          .append(",").append(buddy).append("\n");
+      objects.add(new Q3Object(flag, count, buddy));
+    }
+    print("done adding objects: " + objects.size());
+
+    Collections.sort(objects);
+    int total = objects.size();
+    for (int i = 0; i < total; i++) {
+      Q3Object o = objects.get(i);
+      print("=====");
+      print(o.toString());
+      response = response.append(FLAG_MAP.get(o.relationship)).append(",")
+          .append(o.count).append(",").append(o.buddy).append("\n");
     }
 
     return response.toString();
