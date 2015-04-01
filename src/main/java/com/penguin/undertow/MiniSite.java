@@ -16,7 +16,7 @@ public class MiniSite {
    */
   static final int MYSQL = 0;
   static final int HBASE = 1;
-  static final int DB_TYPE = MYSQL;
+  static final int DB_TYPE = HBASE;
 
   private static final String PATH_HC = "/healthcheck";
   private static final String PATH_Q1 = "/q1";
@@ -36,13 +36,22 @@ public class MiniSite {
     HttpHandler healthCheckHandler = new HealthCheckHandler();
     HttpHandler q1Handler = new Q1HeartBeatHandler();
     HttpHandler q2Handler = null;
-    if (DB_TYPE == MYSQL) {
+    HttpHandler q3Handler = null;
+    HttpHandler q4Handler = null;
+
+    switch (DB_TYPE) {
+    case MYSQL:
       q2Handler = new Q2MySQLHandler();
-    } else {
+      q3Handler = new Q3MySQLHandler();
+      q4Handler = new Q4MySQLHandler();
+      break;
+    case HBASE:
+      System.out.println("choosing hbase");
       q2Handler = new Q2HBaseHandler();
+      q3Handler = new Q3HBaseHandler();
+      q4Handler = new Q4HBaseHandler();
+      break;
     }
-    HttpHandler q3Handler = new Q3MySQLHandler();
-    HttpHandler q4Handler = new Q4MySQLHandler();
 
     builder
         .setHandler(

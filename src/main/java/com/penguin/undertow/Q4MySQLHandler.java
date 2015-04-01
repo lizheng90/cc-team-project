@@ -88,9 +88,11 @@ public class Q4MySQLHandler extends BaseHttpHandler {
   }
 
   public String getTime(String str) {
-    String result = str.substring(0, 4) + "-" + str.substring(4, 6) + "-"
-        + str.substring(6, 8) + "+" + str.substring(8, 10) + ":"
-        + str.substring(10, 12) + ":" + str.substring(12, 14) + "\n";
-    return result;
+    StringBuilder sb = new StringBuilder();
+    sb = sb.append(str.substring(0, 4)).append("-").append(str.substring(4, 6))
+        .append("-").append(str.substring(6, 8)).append("+")
+        .append(str.substring(8, 10)).append(":").append(str.substring(10, 12))
+        .append(":").append(str.substring(12, 14));
+    return sb.toString();
   }
 }

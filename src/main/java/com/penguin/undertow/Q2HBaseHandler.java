@@ -13,8 +13,6 @@ import org.apache.hadoop.hbase.util.Bytes;
 
 /**
  * Handler for Question 2 : JDBC Query
- *
- * @author Zheng Li
  */
 
 public class Q2HBaseHandler extends BaseHttpHandler {
