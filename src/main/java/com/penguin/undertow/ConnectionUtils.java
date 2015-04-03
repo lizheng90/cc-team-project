@@ -9,7 +9,6 @@ import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.ZooKeeperConnectionException;
 import org.apache.hadoop.hbase.client.HConnection;
 import org.apache.hadoop.hbase.client.HConnectionManager;
-import org.apache.hadoop.hbase.client.HTable;
 import org.apache.hadoop.hbase.client.HTableInterface;
 
 import com.zaxxer.hikari.HikariConfig;
@@ -37,14 +36,6 @@ public class ConnectionUtils {
   private Configuration conf = null;
   private HConnection hConnection = null;
 
-  /**
-   * HBase - Manual pool
-   */
-  private static HConnection hBaseConnection = null;
-  private static int MAX_POOL = 2000;
-  private static HTableInterface[] hTables = null;
-  private static HTable hTable = null;
-
   @SuppressWarnings("all")
   protected ConnectionUtils() {
     // MySQL
@@ -68,23 +59,6 @@ public class ConnectionUtils {
       } catch (ZooKeeperConnectionException e) {
         e.printStackTrace();
       }
-
-   // HBase
-      /*
-      hTables = new HTableInterface[MAX_POOL];
-
-      try {
-        hBaseConnection = HConnectionManager
-            .createConnection(HBaseConfiguration.create());
-
-
-        for (int i = 0; i < MAX_POOL; i++) {
-          hTables[i] = hBaseConnection.getTable("twitter");
-        }
-       hTable = new HTable(HBaseConfiguration.create(), Bytes.toBytes("twitter"));
-      } catch (Exception e) {
-        e.printStackTrace();
-      }*/
     }
   }
 
@@ -100,8 +74,6 @@ public class ConnectionUtils {
   }
 
   public HTableInterface getHTable(String tableName) throws IOException {
-    /*Random r = new Random();
-    return hTables[r.nextInt(MAX_POOL)];*/
     return hConnection.getTable(tableName);
   }
 }
