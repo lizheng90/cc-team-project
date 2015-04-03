@@ -16,7 +16,7 @@ public class MiniSite {
    */
   static final int MYSQL = 0;
   static final int HBASE = 1;
-  static final int DB_TYPE = HBASE;
+  static final int DB_TYPE = MYSQL;
 
   private static final String PATH_HC = "/healthcheck";
   private static final String PATH_Q1 = "/q1";
@@ -41,6 +41,7 @@ public class MiniSite {
 
     switch (DB_TYPE) {
     case MYSQL:
+      System.out.println("choosing mysql");
       q2Handler = new Q2MySQLHandler();
       q3Handler = new Q3MySQLHandler();
       q4Handler = new Q4MySQLHandler();

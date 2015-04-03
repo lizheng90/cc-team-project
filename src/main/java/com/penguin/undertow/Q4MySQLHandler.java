@@ -10,6 +10,18 @@ import java.util.Deque;
 
 /**
  * Question 4 MySQL Handler.
+ *
+ * Table schema: create table twitter44(tag VARCHAR(200) CHARACTER SET utf8
+ * COLLATE utf8_bin, time bigint, tweetid bigint, userid bigint) engine =
+ * myisam;
+ *
+ * ---------------------------------
+ * | tag | time | tweetid | userid |
+ * ---------------------------------
+ *
+ * Table index:
+ * CREATE INDEX tagtimeIndex ON twitter4 (tag,time);
+ * CREATE INDEX timeIndex ON twitter4 (time);
  */
 
 public class Q4MySQLHandler extends BaseHttpHandler {

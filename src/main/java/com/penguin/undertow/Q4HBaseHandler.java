@@ -3,9 +3,10 @@ package com.penguin.undertow;
 import io.undertow.server.HttpServerExchange;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.Deque;
+import java.util.List;
 
+import org.apache.hadoop.hbase.KeyValue;
 import org.apache.hadoop.hbase.client.HTableInterface;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.ResultScanner;
@@ -19,6 +20,10 @@ import org.apache.hadoop.hbase.util.Bytes;
 
 /**
  * Handler for Question 2 : JDBC Query
+ *
+ * -------------------------------------------------
+ * | hashTag | info:uid | info:yeardate | info:tid |
+ * -------------------------------------------------
  */
 
 public class Q4HBaseHandler extends BaseHttpHandler {
@@ -87,23 +92,18 @@ public class Q4HBaseHandler extends BaseHttpHandler {
       table = ConnectionUtils.getInstance().getHTable(TABLE_NAME);
 
       scanner = table.getScanner(scan);
+
     } catch (IOException e) {
       System.out.println("EXCEPTION " + e.toString());
-    } /*finally {
-      if (table != null) {
-        try {
-          table.close();
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
-      }
-      }*/
+    }
 
     StringBuilder response = new StringBuilder();
     for (Result result : scanner) {
-      String time = getTime(getValue(result, QUALIFIER_TIME));
-      String userId = getValue(result, QUALIFIER_UID);
-      String tweetId = getValue(result, QUALIFIER_TID);
+      List<KeyValue> keyvalues = result.list();
+
+      String time = Bytes.toString(keyvalues.get(0).getValue());
+      String userId = Bytes.toString(keyvalues.get(1).getValue());
+      String tweetId = Bytes.toString(keyvalues.get(2).getValue());
 
       response = response.append(tweetId).append(",").append(userId)
           .append(",").append(time).append("\n");
@@ -119,22 +119,5 @@ public class Q4HBaseHandler extends BaseHttpHandler {
         .append(str.substring(8, 10)).append(":").append(str.substring(10, 12))
         .append(":").append(str.substring(12, 14));
     return sb.toString();
-  }
-
-  private String getValue(Result result, byte[] qualifier) {
-    byte[] value = result.getValue(INFO_FAMILY, qualifier);
-    if (value == null || value.length == 0) {
-      return null;
-    }
-    String res = null;
-    try {
-      res = new String(value, "UTF-8");
-
-      res = res.replaceAll("pngn134", "\n");
-    } catch (UnsupportedEncodingException e) {
-      System.out.println("EXCEPTION " + e.toString());
-    }
-
-    return res;
   }
 }

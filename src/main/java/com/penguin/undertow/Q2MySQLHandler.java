@@ -10,6 +10,16 @@ import java.util.Deque;
 
 /**
  * Handler for Question 2 : JDBC Query
+ *
+ * Table schema: create table twitter2 (userid bigint, ts bigint, content NCHAR
+ * VARCHAR(800) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci) engine=myisam;
+ *
+ * -------------------------
+ * | userid | ts | content |
+ * -------------------------
+ *
+ * Table index:
+ * CREATE INDEX usertimeIndex ON twitter2 (userid,ts);
  */
 
 public class Q2MySQLHandler extends BaseHttpHandler {

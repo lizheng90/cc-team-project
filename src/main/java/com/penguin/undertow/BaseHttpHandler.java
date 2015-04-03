@@ -28,7 +28,6 @@ public abstract class BaseHttpHandler implements HttpHandler {
   /**
    * MySQL
    */
-
   private static final String ADDRESS_MYSQL = "jdbc:mysql://localhost:3306/CC_Final";
   private static final String USERNAME = "root";
   private static final String PW = "";
@@ -89,5 +88,9 @@ public abstract class BaseHttpHandler implements HttpHandler {
   protected void logTime(String key) {
     long endTime = System.currentTimeMillis();
     System.out.println(key + ": " + (endTime - startTime) + "ms");
+  }
+
+  protected void print(String print) {
+    System.out.println(print);
   }
 }

@@ -13,6 +13,10 @@ import org.apache.hadoop.hbase.util.Bytes;
 
 /**
  * Handler for Question 2 : JDBC Query
+ *
+ * -------------------------
+ * | userId | info:content |
+ * -------------------------
  */
 
 public class Q2HBaseHandler extends BaseHttpHandler {
@@ -59,15 +63,7 @@ public class Q2HBaseHandler extends BaseHttpHandler {
       result = table.get(get);
     } catch (IOException e) {
       System.out.println("EXCEPTION " + e.toString());
-    } /*finally {
-      if (table != null) {
-        try {
-          table.close();
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
-      }
-      }*/
+    }
 
     byte[] value = result.getValue(INFO_FAMILY, INFO_QUALIFIER);
 

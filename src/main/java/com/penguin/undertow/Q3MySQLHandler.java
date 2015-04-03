@@ -10,11 +10,19 @@ import java.util.Deque;
 
 /**
  * Question 3 MySQL Handler.
+ *
+ * Table schema: create table twitter33(sourceid bigint NOT NULL, content text)
+ * engine=myisam;
+ *
+ * ----------------------
+ * | sourceid | content |
+ * ----------------------
+ *
+ * Table index:
+ * create index sourceid_index on twitter33(sourceid);
  */
 
 public class Q3MySQLHandler extends BaseHttpHandler {
-
-  private static final char[] FLAG_MAP = new char[] { '0', '-', '+', '*' };
 
   /**
    * Keys for http params
@@ -36,12 +44,8 @@ public class Q3MySQLHandler extends BaseHttpHandler {
       return getDefaultResponse();
     }
 
-    // setStartTime();
     StringBuilder response = new StringBuilder();
-
-    String sql = "SELECT retweetid,count,flag FROM ( SELECT retweetid,count,flag FROM twitter3 WHERE sourceid="
-        + userId
-        + " LIMIT 100) as s ORDER BY flag DESC, count DESC, retweetid ASC;";
+    String sql = "SELECT content FROM twitter33 WHERE sourceid=" + userId + ";";
     Connection conn = null;
     PreparedStatement pstmt = null;
     ResultSet rs = null;
@@ -49,16 +53,10 @@ public class Q3MySQLHandler extends BaseHttpHandler {
     try {
       conn = ConnectionUtils.getInstance().getMySQLConnection();
       pstmt = conn.prepareStatement(sql);
-      // logTime("preparedStmt");
       rs = pstmt.executeQuery();
-      // logTime("done executing query");
       while (rs.next()) {
-        char relationship = FLAG_MAP[rs.getInt("flag")];
-        response = response.append(relationship).append(",")
-            .append(rs.getString("count")).append(",")
-            .append(rs.getString("retweetid")).append("\n");
+        response = response.append(rs.getString("content"));
       }
-      // logTime("done appending");
     } catch (SQLException e) {
       e.printStackTrace();
     } finally {
@@ -78,7 +76,6 @@ public class Q3MySQLHandler extends BaseHttpHandler {
     }
 
     String result = response.toString();
-    // logTime("done toString");
     return getDefaultResponse() + result;
   }
 }

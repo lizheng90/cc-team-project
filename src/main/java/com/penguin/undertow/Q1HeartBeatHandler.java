@@ -113,9 +113,6 @@ public class Q1HeartBeatHandler extends BaseHttpHandler {
   }
 
   private String getTimeStamp() {
-    /*
-    return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss\n")
-        .format(new java.util.Date());*/
     return FastDateFormat.getInstance("yyyy-MM-dd HH:mm:ss\n").format(
         new Date());
 
