@@ -23,6 +23,8 @@ public class MiniSite {
   private static final String PATH_Q2 = "/q2";
   private static final String PATH_Q3 = "/q3";
   private static final String PATH_Q4 = "/q4";
+  private static final String PATH_Q5 = "/q5";
+  private static final String PATH_Q6 = "/q6";
 
   static final int SERVER_PORT = 80;
   static final String SERVER_IP = "0.0.0.0";
@@ -38,6 +40,8 @@ public class MiniSite {
     HttpHandler q2Handler = null;
     HttpHandler q3Handler = null;
     HttpHandler q4Handler = null;
+    HttpHandler q5Handler = new Q5MySQLHandler();
+    HttpHandler q6Handler = new Q6MySQLHandler();
 
     switch (DB_TYPE) {
     case MYSQL:
@@ -60,7 +64,9 @@ public class MiniSite {
                 .addPrefixPath(PATH_Q1, q1Handler)
                 .addPrefixPath(PATH_Q2, q2Handler)
                 .addPrefixPath(PATH_Q3, q3Handler)
-                .addPrefixPath(PATH_Q4, q4Handler)).setWorkerThreads(128)
+                .addPrefixPath(PATH_Q4, q4Handler)
+                .addPrefixPath(PATH_Q5, q5Handler)
+                .addPrefixPath(PATH_Q6, q6Handler)).setWorkerThreads(128)
         .setServerOption(UndertowOptions.ALWAYS_SET_KEEP_ALIVE, false);
 
     Undertow server = builder.build();
